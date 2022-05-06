@@ -1,6 +1,5 @@
 import json
 import os
-from re import T
 import sys
 import time
 
@@ -14,54 +13,54 @@ class Shell:
             self.is_settings = True   
         
             self.color_panel = {
-                "BLACK": 30,
-                "RED": 31,
-                "GREEN": 32,
-                "YELLOW": 33,
-                "BLUE": 34,
-                "MAGENTA": 35,
-                "CYAN": 36,
-                "WHITE": 37,
-                "RESET": 39,
-                "LIGHTBLACK_EX": 90,
-                "LIGHTRED_EX": 91,
-                "LIGHTGREEN_EX": 92,
-                "LIGHTYELLOW_EX": 93,
-                "LIGHTBLUE_EX": 94,
-                "LIGHTMAGENTA_EX": 95,
-                "LIGHTCYAN_EX": 96,
-                "LIGHTWHITE_EX": 97
+                "BLACK"           : 30,
+                "RED"             : 31,
+                "GREEN"           : 32,
+                "YELLOW"          : 33,
+                "BLUE"            : 34,
+                "MAGENTA"         : 35,
+                "CYAN"            : 36,
+                "WHITE"           : 37,
+                "RESET"           : 39,
+                "LIGHTBLACK_EX"   : 90,
+                "LIGHTRED_EX"     : 91,
+                "LIGHTGREEN_EX"   : 92,
+                "LIGHTYELLOW_EX"  : 93,
+                "LIGHTBLUE_EX"    : 94,
+                "LIGHTMAGENTA_EX" : 95,
+                "LIGHTCYAN_EX"    : 96,
+                "LIGHTWHITE_EX"   : 97
             }
             
             self.back_color_panel = {
-                "_BLACK" : 40,
-                "_RED" : 41,
-                "_GREEN" : 42,
-                "_YELLOW" : 43,
-                "_BLUE" : 44,
-                "_MAGENTA" : 45,
-                "_CYAN" : 46,
-                "_WHITE" : 47,
-                "_RESET" : 49,
-                "_LIGHTBLACK_EX" : 100,
-                "_LIGHTRED_EX" : 101,
-                "_LIGHTGREEN_EX" : 102,
+                "_BLACK"          : 40,
+                "_RED"            : 41,
+                "_GREEN"          : 42,
+                "_YELLOW"         : 43,
+                "_BLUE"           : 44,
+                "_MAGENTA"        : 45,
+                "_CYAN"           : 46,
+                "_WHITE"          : 47,
+                "_RESET"          : 49,
+                "_LIGHTBLACK_EX"  : 100,
+                "_LIGHTRED_EX"    : 101,
+                "_LIGHTGREEN_EX"  : 102,
                 "_LIGHTYELLOW_EX" : 103,
-                "_LIGHTBLUE_EX" : 104,
-                "_LIGHTMAGENTA_EX" : 105,
-                "_LIGHTCYAN_EX" : 106,
-                "_LIGHTWHITE_EX" : 107
+                "_LIGHTBLUE_EX"   : 104,
+                "_LIGHTMAGENTA_EX": 105,
+                "_LIGHTCYAN_EX"   : 106,
+                "_LIGHTWHITE_EX"  : 107
             }
             
             self.style_panel = {
-                "RESET" : 0,
-                "BOLD" : 1,
-                "ITALIC" : 3,
-                "UNDERLINE" : 4,
-                "SLOW_BLINK" : 5,
-                "RAPID_BLINK" : 6,
-                "INVERSE" : 7,
-                "HIDDEN" : 8
+                "RESET"           : 0,
+                "BOLD"            : 1,
+                "DIM"             : 2,
+                "ITALIC"          : 3,
+                "UNDERLINE"       : 4,
+                "BLINK"           : 5,
+                "REVERSE"         : 7,
+                "STRIKTHROUGH"    : 9
             }
             
         else:
@@ -104,7 +103,9 @@ class Shell:
                 
             command = input(self.entry_prompt).lower()
             
-            if command.split()[0] in self.commands["liste"]:
+            if command == "":
+                pass
+            elif command.split()[0] in self.commands["liste"]:
                 try:
                     os.system(f"{self.commands['liste'][command.split()[0]]} {command.split()[1]}")
                 except:
@@ -139,7 +140,7 @@ class Shell:
             
             
         if settings["title"] != "":
-            os.system(f"title {settings['title']}")
+            os.system(f"title {''.join(settings['title'])}")
         
         if settings["prompt"] == [""]:
             return ''
@@ -168,13 +169,13 @@ class Shell:
                 entry_prompt.append(time.strftime("%Y", time.localtime()))
                 
             elif item in self.color_panel.keys():
-                entry_prompt.append(self.color({self.color_panel[item]}))
+                entry_prompt.append("\033[" + str(self.color_panel[item]) + 'm')
                 
             elif item in self.back_color_panel.keys():
-                entry_prompt.append(self.back({self.back_color_panel[item]}))
+                entry_prompt.append("\033[" + str(self.back_color_panel[item]) + "m")
                 
             elif item in self.style_panel.keys():
-                entry_prompt.append(self.style({self.style_panel[item]})) 
+                entry_prompt.append("\033[" + str(self.style_panel[item]) + "m") 
                 
             else:
                 entry_prompt.append(item)
@@ -213,19 +214,19 @@ class Shell:
             loaded = json.load(f)
             return loaded
     
-    def in_json(self, file, value, replace=False):
+    def in_json(self, file, value, key="prompt", replace=False):
         loaded = self.get_json(file)
         
         if not replace:
-            loaded["prompt"].append(value)
+            loaded[key].append(value)
         else:
-            loaded["prompt"] = [value]
+            loaded[key] = [value]
         
         with open(file, 'w', encoding="utf-8") as f:
             json.dump(loaded, f, indent=4)
     
     def get_lang(self):
-        return self.get_json('./settings/language.json')["selected_language"]
+        return ''.join(self.get_json('./settings/settings.json')["selected_language"])
         
     
     def get_help(self, command):
@@ -283,6 +284,7 @@ class Shell:
                         
                     elif choice == 2:
                         """Adding the time"""
+                        
                         self.menu(text['time'])
                         finish = False
                         while not finish:
@@ -308,24 +310,137 @@ class Shell:
                             elif choice == 8:
                                 finish = True
                         print("\n\n")
-                    
+                        
+                    elif choice == 3:
+                        """Adding user"""
+                        self.in_json('./settings/settings.json', "**user**")
+                        
+                    elif choice == 4:
+                        """Adding the hostname"""
+                        self.in_json('./settings/settings.json', "**host**")
+                        
+                    elif choice == 5:
+                        """Adding the color"""
+                        finish = False
+                        
+                        self.menu(text['color_type'])
+                        choice_color = int(input(f"{self.hook('?')} > "))
+                        while not finish:
+                            if choice_color == 1:
+                                print(text["color_exemple"][0] + self.color("BLUE", text["color_exemple"][1]))
+                                self.menu(text["color_choice"])
+                                choice = int(input(f"{self.hook('?')} > "))
+                                prefix = ""
+                                
+                            elif choice_color == 2:
+                                print(text["color_exemple"][0] + self.back("_BLUE", text["color_exemple"][1]))
+                                self.menu(text["color_choice"])
+                                choice = int(input(f"{self.hook('?')} > "))
+                                prefix = "_"
+                                
+                            elif choice_color == 3:
+                                finish = True
+                                choice = 0
+                            
+                            if choice == 10:
+                                while not finish:
+                                    self.menu(text["color_choice_2"])
+                                    choice = int(input(f"{self.hook('?')} > "))
+                                    
+                                    if choice in range(1, 8):
+                                        self.in_json('./settings/settings.json', f"{prefix}{list(self.color_panel.keys())[choice-1+9]}")
+                                        
+                                    elif choice == 9:
+                                        finish = True
+                                finish = False
+                            
+                            elif choice == 11:
+                                finish = True
+                            
+                            elif choice in range(1, 9):
+                                self.in_json('./settings/settings.json', f"{prefix}{list(self.color_panel.keys())[choice-1]}")
+                            
+                    elif choice == 6:
+                        """Adding the style"""
+                        finish = False
+                        while not finish:
+                            for i in text["style_choice"]:
+                                if i == "Exit":
+                                    print(self.hook("8") + " Exit")
+                                else:
+                                    print("[" + self.color("YELLOW", str(text['style_choice'].index(i) + 1)) + "] " + self.style(i.upper(), i))
+                            
+                            choice = int(input(f"{self.hook('?')} > "))
+                            
+                            if choice == 1:
+                                """Adding bold style"""
+                                self.in_json('./settings/settings.json', "BOLD")
+                                
+                            elif choice == 2:
+                                """Adding dim style"""
+                                self.in_json('./settings/settings.json', "DIM")
+                            
+                            elif choice == 3:
+                                """Adding italic style"""
+                                self.in_json('./settings/settings.json', "ITALIC")
+                                
+                            elif choice == 4:
+                                """Adding underline style"""
+                                self.in_json('./settings/settings.json', "UNDERLINE")
+                                
+                            elif choice == 5:
+                                """Adding blink style"""
+                                self.in_json('./settings/settings.json', "BLINK")
+                                
+                            elif choice == 6:
+                                """Adding reverse style"""
+                                self.in_json('./settings/settings.json', "REVERSE")
+                                
+                            elif choice == 7:
+                                """Adding strikethrough style"""
+                                self.in_json('./settings/settings.json', "STRIKETHROUGH")
+                                
+                            elif choice == 8:
+                                """Exiting the style"""
+                                finish = True
+                        
                     
                     elif choice == 7:
+                        title = input(text["title"])
+                        self.in_json('./settings/settings.json', title, key="title", replace=True)
+                        
+                    elif choice == 8:
                         custom = input(text["custom_text"])
                         self.in_json('./settings/settings.json', custom)
                                                 
-                    elif choice == 8:
+                    elif choice == 9:
                         """Reset the prompt"""
                         self.in_json('./settings/settings.json', "", replace=True)
                         print(text["reset"])
                         
-                    elif choice == 9:
+                    elif choice == 10:
                         """Go back"""
                         return 
-                        
+                    
+            elif choice == 2:
+                finish = False
+                while not finish:
+                    self.menu(list(self.get_json('./settings/language.json')["setup_texte"].keys()))
+                    print(self.hook(len(list(self.get_json('./settings/language.json')["setup_texte"].keys())) + 1) + " Exit")
+                    
+                    choice = int(input(f"{self.hook('?')} > "))
+                    
+                    if choice == len(list(self.get_json('./settings/language.json')["setup_texte"].keys())) + 1:
+                        finish = True
+                    elif choice > len(list(self.get_json('./settings/language.json')["setup_texte"].keys())):
+                        print(self.color("RED", text["language_error"]))
+                    else:
+                        self.in_json('./settings/settings.json', list(self.get_json('./settings/language.json')["setup_texte"].keys())[choice-1], 
+                                     key="selected_language", replace=True)
+                        finish = True
+                finish = False
                 
             
-                
-        
-a = Shell()
-a.run()
+      
+shell = Shell()
+shell.run()
