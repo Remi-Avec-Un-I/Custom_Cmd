@@ -1,0 +1,98 @@
+{
+
+    "texte": {
+        "en": {
+            "file_error"    : "This file does not exist",
+            "value_error"   : "You have inserted an invalid value (too long or too short)",
+            "int_error"     : "You have to input a number !",
+            "welcome"       : "You are in the configuration menu. You can change the language of the shell's commandsand the language of the shell's output.", 
+            "choice"        : ["Prompt", "Language", "Exit"],
+            "prompt"        : "Choose from the following options how you want your prompt to look like:",
+            "prompt_choice" : ["Path", "Time", "User", "Host", "Color", "Style", "Window title", "Custom text", "Reset", "Exit"],
+            "prompt_look"   : "Your prompt looks like:",
+            "time"          : ["Custom text (to separate the time for exemple)", "Year", "Month", "Day", "Hour", "Minute", "Second", "Exit"],
+            "color_type"    : ["Foreground", "Background", "Back"],
+            "color_exemple" : ["This is going to make it like this: ", "Lorem ipsum dolor sit amet."],
+            "color_choice"  : ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White", "Reset", "More", "Exit"],
+            "color_choice_2": ["LIGHTBLACK_EX", "LIGHTRED_EX", "LIGHTGREEN_EX", "LIGHTYELLOW_EX", "LIGHTBLUE_EX", "LIGHTMAGENTA_EX", "LIGHTCYAN_EX", "LIGHTWHITE_EX", "Back"],
+            "style_choice"  : ["Bold", "Dim", "Italic", "Underline", "Blink", "Reverse", "Strikthrough", "Exit"],
+            "title"         : "Choose the name of the name of the window :",
+            "custom_text"   : "Enter your custom text : ",
+            "reset"         : "You reset your prompt to the default one.",
+            "language_error": "You have to choose a language."
+        },
+        "fr": {
+            "welcome"       : "Vous êtes dans le menu de configuration",
+            "choice"        : ["Prompt", "Langue"]
+        }
+    },
+
+
+
+    "usage": {
+        "en": {
+            "leave" : {
+                "alias" : ["exit", "leave", "quit"],
+                "desc"  : "Leave the configuration menu.",
+                "args"  : []
+            },
+
+            "help" : {
+                "alias" : ["help", "h", "-help", "-h", "--help", "--h", "?"],
+                "desc"  : "Display the help for all commands, or specific ones if used as argument.",
+                "args"  : ["all     : Display the help for windows native commands."]
+            },
+
+            "setup" : {
+                "alias" : ["setup", "config", "configure"],
+                "desc"  : "Display the configuration menu.",
+                "args"  : []
+            },
+
+            "randint" : {
+                "alias" : ["randint", "randomint", "random", "rdint"],
+                "desc"  : "Generate a random integer between two values.",
+                "args"  : ["min : The minimum value.", "max : The maximum value.", "size : The number of digits."]
+            }
+        }
+    },
+
+
+
+    "en" : {
+        "leave"  : "LEAVE          Quit the command prompt.",
+        "help"   : "HELP           Show this messsage with informations about commands.",
+        "setup"  : "SETUP          Setup the prompt.",
+        "randint": "RANDINT        Generate a random number.",
+        "pwd"    : "PWD            Works the same as cd."
+    },
+    "fr" : {
+        "leave" : "LEAVE          Quitte l'interpréteur de commandes.",
+        "help"  : "HELP           Affiche ce message avec les informations sur les commandes.",
+        "setup" : "SETUP          Permet de configurer le prompt."
+    },
+    "de" : {
+        "leave" : "LEAVE          Beendet den Befehlsinterpreter.",
+        "help"  : "HELP           Zeigt diese Nachricht mit Informationen über Befehle an.",
+        "setup" : "SETUP          Setzt den Prompt auf einen bestimmten Wert.",
+        "liste" : "LIST           Liste."
+    },
+    "es" : {
+        "leave" : "LEAVE          Salir del interprete de comandos.",
+        "help"  : "HELP           Muestra este mensaje con informaciones sobre los comandos.",
+        "setup" : "SETUP          Configurar el prompt.",
+        "liste" : "LIST           Lista."
+    },
+    "it" : {
+        "leave" : "LEAVE          Esci dall'interprete di comandi.",
+        "help"  : "HELP           Mostra questo messaggio con le informazioni sui comandi.",
+        "setup" : "SETUP          Configura il prompt.",
+        "liste" : "LIST           Lista."
+    },
+    "pt" : {
+        "leave" : "LEAVE          Sair do interpretador de comandos.",
+        "help"  : "HELP           Mostra este mensagem com informações sobre os comandos.",
+        "setup" : "SETUP          Configurar o prompt.",
+        "liste" : "LIST           Lista."
+    }
+}
