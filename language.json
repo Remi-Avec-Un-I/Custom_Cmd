@@ -19,12 +19,15 @@
             "help_liste"    : " -> ",
             "int_error"     : "You have to input a number !",
             "art_error"     : "This 1-line art does not exist, maybe try random, or this one : ",
+            "art_error_2"   : "The preset couldn't be loaded",
             "file_error"    : "This file does not exist",
             "value_error"   : "You have inserted an invalid value (not integer)",
             "language_error": "You have to choose a language.",
             "arg_error"     : ["Missing required argument, try ", " help for more information."],
             "calc_error"    : "You have to input valid operation, only with numbers and operators."
         },
+
+
         "fr": {
             "welcome"       : "Vous êtes dans le menu de configuration",
             "choice"        : ["Prompt", "Langue"]
