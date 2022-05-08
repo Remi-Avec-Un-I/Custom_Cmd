@@ -2,9 +2,6 @@
 
     "texte": {
         "en": {
-            "file_error"    : "This file does not exist",
-            "value_error"   : "You have inserted an invalid value (too long or too short)",
-            "int_error"     : "You have to input a number !",
             "welcome"       : "You are in the configuration menu. You can change the language of the shell's commandsand the language of the shell's output.", 
             "choice"        : ["Prompt", "Language", "Exit"],
             "prompt"        : "Choose from the following options how you want your prompt to look like:",
@@ -19,7 +16,14 @@
             "title"         : "Choose the name of the name of the window :",
             "custom_text"   : "Enter your custom text : ",
             "reset"         : "You reset your prompt to the default one.",
-            "language_error": "You have to choose a language."
+            "help_liste"    : " -> ",
+            "int_error"     : "You have to input a number !",
+            "art_error"     : "This 1-line art does not exist, maybe try random, or this one : ",
+            "file_error"    : "This file does not exist",
+            "value_error"   : "You have inserted an invalid value (not integer)",
+            "language_error": "You have to choose a language.",
+            "arg_error"     : ["Missing required argument, try ", " help for more information."],
+            "calc_error"    : "You have to input valid operation, only with numbers and operators."
         },
         "fr": {
             "welcome"       : "Vous êtes dans le menu de configuration",
@@ -32,27 +36,39 @@
     "usage": {
         "en": {
             "leave" : {
-                "alias" : ["exit", "leave", "quit"],
-                "desc"  : "Leave the configuration menu.",
-                "args"  : []
+                "Alias"         : ["exit", "leave", "quit"],
+                "Description"   : ["Leave the configuration menu."],
+                "Arguments"     : []
             },
 
             "help" : {
-                "alias" : ["help", "h", "-help", "-h", "--help", "--h", "?"],
-                "desc"  : "Display the help for all commands, or specific ones if used as argument.",
-                "args"  : ["all     : Display the help for windows native commands."]
+                "Alias"         : ["help", "h", "-help", "-h", "--help", "--h", "?"],
+                "Description"   : ["Display the help for all commands, or specific ones if used as argument."],
+                "Arguments"     : ["all -> Display the help for windows native commands."]
             },
 
             "setup" : {
-                "alias" : ["setup", "config", "configure"],
-                "desc"  : "Display the configuration menu.",
-                "args"  : []
+                "Alias"         : ["setup", "config", "configure"],
+                "Description"   : ["Display the configuration menu."],
+                "Arguments"     : []
             },
 
-            "randint" : {
-                "alias" : ["randint", "randomint", "random", "rdint"],
-                "desc"  : "Generate a random integer between two values.",
-                "args"  : ["min : The minimum value.", "max : The maximum value.", "size : The number of digits."]
+            "randnum" : {
+                "Alias"         : ["randint", "randomint", "random", "rdint", "rd", "randnum", "rand"],
+                "Description"   : ["Generate a random integer between two values."],
+                "Arguments"     : ["The minimum value., or the maximum if only one argument.", "The maximum value.", "type -> By default integer, but you can specify float."]
+            },
+
+            "art" : {
+                "Alias"         : ["art", "1-line"],
+                "Description"   : ["Display a 1-line art. Credit to https://github.com/sepandhaghighi/art"],
+                "Arguments"     : ["name -> The name of the art, if the name is random, get a random art."]
+            },
+
+            "calc" : {
+                "Alias"         : ["calc", "calculator", "calcul", "calculatrice"],
+                "Description"   : ["Do your math."],
+                "Arguments"     : ["The math you want to do, like 5 + 4."]
             }
         }
     },
@@ -60,11 +76,15 @@
 
 
     "en" : {
+        "liste"  : "List of commands :",
         "leave"  : "LEAVE          Quit the command prompt.",
         "help"   : "HELP           Show this messsage with informations about commands.",
         "setup"  : "SETUP          Setup the prompt.",
-        "randint": "RANDINT        Generate a random number.",
-        "pwd"    : "PWD            Works the same as cd."
+        "randnum": "RANDNUM        Generate a random number.",
+        "pwd"    : "PWD            Works the same as cd.",
+        "art"    : "ART            Display a 1-line art.",
+        "calc"   : "CALC           Calculate a mathematical expression."
+        
     },
     "fr" : {
         "leave" : "LEAVE          Quitte l'interpréteur de commandes.",
