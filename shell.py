@@ -119,7 +119,7 @@ class Shell:
                 self.art_dict = dict(eval(art))
             
         except:
-            self.art = False
+            self.art_dict = False
 
 
     # Main function, where the shell is started using infinite loop.
@@ -157,6 +157,7 @@ class Shell:
                                     try:
                                         getattr(self, func)()
                                     except:
+                                        print(e)
                                         print(self.texte("arg_error")[0] + command.split()[0] + self.texte("arg_error")[1])
                                 finally:
                                     is_command = True
@@ -559,6 +560,9 @@ class Shell:
                     print(self.art_dict[' '.join(args)])
                 except:
                     print(self.texte("art_error") + list(self.art_dict.keys())[rd.randint(0, len(list(self.art_dict.keys())))])
+                    
+        else:
+            print(self.color("RED", self.texte("art_error_2")))
                     
     # Command : calc
     def calc(self, args):
