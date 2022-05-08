@@ -2,7 +2,7 @@ import json
 import os
 import sys
 import time
-import numpy as np
+import random as rd
 import urllib.request
 
 
@@ -89,19 +89,20 @@ class Shell:
             "help" : ["help", "h", "-help", "-h", "--help", "--h", "?"],
             "setup" : ["setup", "config", "configure"],
             "pwd"   : ["pwd", "cd"],
-            "randint" : ["randint", "randomint", "random", "rdint"],
+            "randnum" : ["randint", "randomint", "random", "rdint", "rd", "randnum", "rand"],
             "art" : ["art", "1-line"],
+            "calc" : ["calc", "calculator", "calcul", "calculatrice"],
             
             
             # Left are linux commands, right are windows commands.
             "liste" : {
-                "ls" : "dir", 
-                "mv" : "ren",
-                "cp" : "copy",
-                "mv" : "move",
-                "clear" : "cls",
-                "rm" : "del",
-                "diff" : "fc"
+                "ls"        : "dir", 
+                "mv"        : "ren",
+                "cp"        : "copy",
+                "mv"        : "move",
+                "clear"     : "cls",
+                "rm"        : "del",
+                "diff"      : "fc"
                  
             }
             
@@ -109,7 +110,7 @@ class Shell:
         
         try:
             # Load art.py.
-            with open(self.path + 'settings__\\art.py', 'r', encoding='utf-8') as f:
+            with open(self.path + 'settings\\art.py', 'r', encoding='utf-8') as f:
                 art = f.read()
                 art = art.split('\n')
                 art = art[1:]
@@ -134,7 +135,7 @@ class Shell:
             
             if command == "":
                 pass
-            elif command.split()[0] in self.commands["liste"]:
+            elif command.split()[0] in self.commands["liste"].keys():
                 try:
                     os.system(f"{self.commands['liste'][command.split()[0]]} {command.split()[1]}")
                 except:
@@ -153,7 +154,10 @@ class Shell:
                                     getattr(self, func)(command.split()[1:])
                                         
                                 except IndexError:
-                                    getattr(self, func)()
+                                    try:
+                                        getattr(self, func)()
+                                    except:
+                                        print(self.texte("arg_error")[0] + command.split()[0] + self.texte("arg_error")[1])
                                 finally:
                                     is_command = True
                                  
@@ -259,7 +263,7 @@ class Shell:
             return loaded
         
     # To get texte from language file.
-    def texte(self, name):
+    def texte(self, name) -> str:
         return self.get_json(self.path + 'settings\\language.json')["texte"][self.get_lang()][name]
     
     # Change json content, or replace
@@ -292,7 +296,7 @@ class Shell:
         text += f"\n{self.color('GREEN', list(dict_help.keys())[1])} : {''.join(dict_help['Description'])}\n"
         text += f"{self.color('GREEN', list(dict_help.keys())[2])} : "
         for x in dict_help[list(dict_help.keys())[2]]:
-            text += f"{x},\n"
+            text += f"{x}\n"
             
         return text
                 
@@ -312,7 +316,11 @@ class Shell:
             print("\n\n")
         
         for key in self.commands.keys():
-            print(self.get_json(self.path + "settings\\language.json")[self.get_lang()][key])
+            if key == "liste":
+                for command in self.commands[key]:
+                    print(command  + " " *(12 - len(command)) + self.texte("help_liste") + self.commands[key][command])
+            else:
+                print(self.get_json(self.path + "settings\\language.json")[self.get_lang()][key])
                 
     # Command : setup (pretty big one isn't it ?)
     def setup(self, help=False):
@@ -505,37 +513,38 @@ class Shell:
     # Command : pwd
     def pwd(self, path):
         """double all \ from path[0]"""
-        if "\\" in path: 
-            os.chdir(path[0].replace("\\", "\\\\"))
+        if "\\" in path:
+            try:
+                os.chdir(path[0].replace("\\", "\\\\"))
+            except Exception as e:
+                print(e)
         else:
-            print
+            try:
+                os.chdir(path[0])
+            except Exception as e:
+                print(e)
     
-    # Command : randint
-    def randint(self, args):
+    # Command : randnum
+    def randnum(self, args):
         if args[0] in self.commands["help"]:
-            print(self.get_help("randint"))
+            print(self.get_help("randnum"))
             return
         
-        max = size = None
         if len(args) == 1:
             try:
-                print(np.random.randint(args[0]))
+                print(rd.randint(0, int(args[0])))
             except:
                 print(self.texte("value_error"))
             
         else:
-            for i in args:
-                if i == args[0]:
-                    pass
-                else:
-                    if i.startswith("max="):
-                        max = i.split("=")[1] # max
-                    elif i.startswith("size="):
-                        size = i.split("=")[1] # size
             try: 
-                print(np.random.randint(args[0], int(max) if max != None else max, int(size) if size != None else size))
+                if args[-1] == "float":
+                    print(rd.uniform(float(args[0]), float(args[1])))
+                else:
+                    print(rd.randint(int(args[0]), int(args[1])))
             except ValueError:
                 print(self.texte("value_error"))
+    
 
     # Command : art
     def art(self, args=['']):
@@ -544,12 +553,24 @@ class Shell:
         
         elif self.art_dict:
             if args[0] == "random" or args == ['']:
-                print(list(self.art_dict.values())[np.random.randint(len(list(self.art_dict.keys())))])
+                print(list(self.art_dict.values())[rd.randint(0, len(list(self.art_dict.keys())))])
             else:
                 try:
                     print(self.art_dict[' '.join(args)])
                 except:
-                    print(self.texte("art_error") + list(self.art_dict.keys())[np.random.randint(len(list(self.art_dict.keys())))])
+                    print(self.texte("art_error") + list(self.art_dict.keys())[rd.randint(0, len(list(self.art_dict.keys())))])
+                    
+    # Command : calc
+    def calc(self, args):
+        if args[0] in self.commands["help"]:
+            print(self.get_help("calc"))
+
+        else:
+            try:
+                print(eval(' '.join(args)))
+            except Exception:
+                print(self.texte("calc_error"))
+                
       
 shell = Shell()
 shell.run()
