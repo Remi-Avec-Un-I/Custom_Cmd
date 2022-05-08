@@ -180,6 +180,8 @@ class Shell:
         
         if settings["prompt"] == [""]:
             return ''
+        elif settings["prompt"] == []:
+            return '> '
         
         for item in settings["prompt"]:
             if item == "**path**":
