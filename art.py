@@ -1,8 +1,3 @@
-"""
-Credit at:
-https://github.com/pwaller/pyfiglet
-"""
-
 art_dic = {
     "fish1": "><(((('>",
     "fish2": "><>",
