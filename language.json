@@ -37,14 +37,6 @@
         },
 
 
-        "fr": {
-            "welcome"       : "Vous êtes dans le menu de configuration",
-            "choice"        : ["Prompt", "Langue"]
-        }
-    },
-
-
-
     "usage": {
         "en": {
             "leave" : {
