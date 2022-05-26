@@ -2,7 +2,9 @@
 
     "texte": {
         "en": {
-            "welcome"       : "You are in the configuration menu. You can change the language of the shell's commandsand the language of the shell's output.", 
+            "welcome"       : "You are in the configuration menu. You can change the language of the shell's command and the language of the shell's output.", 
+            "back"          : " Back",
+            "exit"          : " Exit",
             "choice"        : ["Prompt", "Language", "Exit"],
             "prompt"        : "Choose from the following options how you want your prompt to look like:",
             "prompt_choice" : ["Path", "Time", "User", "Host", "Color", "Style", "Window title", "Custom text", "Reset", "Exit"],
@@ -17,6 +19,13 @@
             "custom_text"   : "Enter your custom text : ",
             "reset"         : "You reset your prompt to the default one.",
             "help_liste"    : " -> ",
+            "preset"        : ["Create a new preset command", "Modify a preset command", "Delete a preset command", "Exit"],
+            "preset_name"   : "Enter the name of the preset command : ",
+            "preset_list2"  : ["Start an application", "Create file/folder", "Write in a file", "Excecute a command", "Exit"],
+            "app_list"      : ["From the startup folder", "From the path"],
+            "app_choice"    : "The full path of the application",
+            "create_file"   : ["Create a file", "Create a folder", "Back"],
+            "file_name"     : "Enter the name of the file (don't forget the file extension) : ",
             "int_error"     : "You have to input a number !",
             "art_error"     : "This 1-line art does not exist, maybe try random, or this one : ",
             "art_error_2"   : "The preset couldn't be loaded",
@@ -39,9 +48,9 @@
     "usage": {
         "en": {
             "leave" : {
-                "Alias"         : ["exit", "leave", "quit"],
+                "Alias"         : ["leave", "exit", "quit"],
                 "Description"   : ["Leave the configuration menu."],
-                "Arguments"     : []
+                "Arguments"     : ["None"]
             },
 
             "help" : {
@@ -53,11 +62,11 @@
             "setup" : {
                 "Alias"         : ["setup", "config", "configure"],
                 "Description"   : ["Display the configuration menu."],
-                "Arguments"     : []
+                "Arguments"     : ["None"]
             },
 
             "randnum" : {
-                "Alias"         : ["randint", "randomint", "random", "rdint", "rd", "randnum", "rand"],
+                "Alias"         : ["randnum", "randint", "randomint", "random", "rdint", "rd", "rand"],
                 "Description"   : ["Generate a random integer between two values."],
                 "Arguments"     : ["The minimum value., or the maximum if only one argument.", "The maximum value.", "type -> By default integer, but you can specify float."]
             },
@@ -72,8 +81,29 @@
                 "Alias"         : ["calc", "calculator", "calcul", "calculatrice"],
                 "Description"   : ["Do your math."],
                 "Arguments"     : ["The math you want to do, like 5 + 4."]
+            },
+
+            "preset" : {
+                "Alias"        : ["preset", "pst", "new_command", "add_command", "add_preset", "add_preset", "custom_command", "custom_preset"],
+                "Description"  : ["Add a new custom commands."],
+                "Arguments"    : ["None"]
+            },
+
+            "pwd" : {
+                "Alias"         : ["pwd", "path"],
+                "Description"   : ["Display the current path, or change the current directory."],
+                "Arguments"     : ["Path to go to like c:/Program Files."]
             }
         }
+    },
+
+    "List_egal_command" : {
+        "ls"        : "dir", 
+        "mv"        : "ren",
+        "cp"        : "copy",
+        "clear"     : "cls",
+        "rm"        : "del",
+        "diff"      : "fc"
     },
 
 
@@ -86,36 +116,8 @@
         "randnum": "RANDNUM        Generate a random number.",
         "pwd"    : "PWD            Works the same as cd.",
         "art"    : "ART            Display a 1-line art.",
-        "calc"   : "CALC           Calculate a mathematical expression."
+        "calc"   : "CALC           Calculate a mathematical expression.",
+        "preset" : "PRESET         Add a new custom command."
         
-    },
-    "fr" : {
-        "leave" : "LEAVE          Quitte l'interpréteur de commandes.",
-        "help"  : "HELP           Affiche ce message avec les informations sur les commandes.",
-        "setup" : "SETUP          Permet de configurer le prompt."
-    },
-    "de" : {
-        "leave" : "LEAVE          Beendet den Befehlsinterpreter.",
-        "help"  : "HELP           Zeigt diese Nachricht mit Informationen über Befehle an.",
-        "setup" : "SETUP          Setzt den Prompt auf einen bestimmten Wert.",
-        "liste" : "LIST           Liste."
-    },
-    "es" : {
-        "leave" : "LEAVE          Salir del interprete de comandos.",
-        "help"  : "HELP           Muestra este mensaje con informaciones sobre los comandos.",
-        "setup" : "SETUP          Configurar el prompt.",
-        "liste" : "LIST           Lista."
-    },
-    "it" : {
-        "leave" : "LEAVE          Esci dall'interprete di comandi.",
-        "help"  : "HELP           Mostra questo messaggio con le informazioni sui comandi.",
-        "setup" : "SETUP          Configura il prompt.",
-        "liste" : "LIST           Lista."
-    },
-    "pt" : {
-        "leave" : "LEAVE          Sair do interpretador de comandos.",
-        "help"  : "HELP           Mostra este mensagem com informações sobre os comandos.",
-        "setup" : "SETUP          Configurar o prompt.",
-        "liste" : "LIST           Lista."
     }
 }
