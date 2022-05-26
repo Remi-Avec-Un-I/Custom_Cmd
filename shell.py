@@ -2,16 +2,110 @@ import json
 import os
 import sys
 import time
+# import urllib.request
 import random as rd
-import urllib.request
-
+from dataclasses import dataclass
+rn = time.time()
+ 
+ 
+@dataclass
+class List:
+    name: str
+    original: str
+ 
+@dataclass
+class Command:
+    name: str
+    alias: list[str]
+    descrition: list[str]
+    arguments: list[str]
 
 class Shell:
+    
+    path = os.getenv('APPDATA') + "\\Shell\\"
+    
+    commands = {
+        "leave": ["exit", "leave", "quit"],
+        "help" : ["help", "h", "-help", "-h", "--help", "--h", "?"],
+        "setup" : ["setup", "config", "configure"],
+        "pwd"   : ["pwd", "cd"],
+        "randnum" : ["randint", "randomint", "random", "rdint", "rd", "randnum", "rand"],
+        "art" : ["art", "1-line"],
+        "calc" : ["calc", "calculator", "calcul", "calculatrice"],
+        "preset" : ["preset", "pst", "new_command", "add_command", "add_preset", "add_preset", "custom_command", "custom_preset"],
+        
+        
+        # Left are linux commands, right are windows commands.
+        "liste" : {
+            "ls"        : "dir", 
+            "mv"        : "ren",
+            "cp"        : "copy",
+            "mv"        : "move",
+            "clear"     : "cls",
+            "rm"        : "del",
+            "diff"      : "fc"
+                
+        }
+        
+    }
+    
+    
+    color_panel = {
+        "BLACK"           : 30,
+        "RED"             : 31,
+        "GREEN"           : 32,
+        "YELLOW"          : 33,
+        "BLUE"            : 34,
+        "MAGENTA"         : 35,
+        "CYAN"            : 36,
+        "WHITE"           : 37,
+        "RESET"           : 39,
+        "LIGHTBLACK_EX"   : 90,
+        "LIGHTRED_EX"     : 91,
+        "LIGHTGREEN_EX"   : 92,
+        "LIGHTYELLOW_EX"  : 93,
+        "LIGHTBLUE_EX"    : 94,
+        "LIGHTMAGENTA_EX" : 95,
+        "LIGHTCYAN_EX"    : 96,
+        "LIGHTWHITE_EX"   : 97
+    }
+    
+    back_color_panel = {
+        "_BLACK"          : 40,
+        "_RED"            : 41,
+        "_GREEN"          : 42,
+        "_YELLOW"         : 43,
+        "_BLUE"           : 44,
+        "_MAGENTA"        : 45,
+        "_CYAN"           : 46,
+        "_WHITE"          : 47,
+        "_RESET"          : 49,
+        "_LIGHTBLACK_EX"  : 100,
+        "_LIGHTRED_EX"    : 101,
+        "_LIGHTGREEN_EX"  : 102,
+        "_LIGHTYELLOW_EX" : 103,
+        "_LIGHTBLUE_EX"   : 104,
+        "_LIGHTMAGENTA_EX": 105,
+        "_LIGHTCYAN_EX"   : 106,
+        "_LIGHTWHITE_EX"  : 107
+    }
+    
+    style_panel = {
+        "RESET"           : 0,
+        "BOLD"            : 1,
+        "DIM"             : 2,
+        "ITALIC"          : 3,
+        "UNDERLINE"       : 4,
+        "BLINK"           : 5,
+        "REVERSE"         : 7,
+        "STRIKTHROUGH"    : 9
+    }
+    
 
     def __init__(self):
         """Initialize the shell."""
         
-        self.path = os.getenv('APPDATA') + "\\Shell\\"
+        
         if os.path.isfile(self.path + 'settings\\settings.json'):
             self.is_settings = True   
         
@@ -20,93 +114,19 @@ class Shell:
             self.entry_prompt = '> '
             os.mkdir(self.path + 'settings')
             with open(self.path + 'settings\\settings.json', 'w+') as f:
-                json.dump({"prompt" : [], "title" : [], "selected_language" : []}, f, indent=4)
-        
-        self.color_panel = {
-            "BLACK"           : 30,
-            "RED"             : 31,
-            "GREEN"           : 32,
-            "YELLOW"          : 33,
-            "BLUE"            : 34,
-            "MAGENTA"         : 35,
-            "CYAN"            : 36,
-            "WHITE"           : 37,
-            "RESET"           : 39,
-            "LIGHTBLACK_EX"   : 90,
-            "LIGHTRED_EX"     : 91,
-            "LIGHTGREEN_EX"   : 92,
-            "LIGHTYELLOW_EX"  : 93,
-            "LIGHTBLUE_EX"    : 94,
-            "LIGHTMAGENTA_EX" : 95,
-            "LIGHTCYAN_EX"    : 96,
-            "LIGHTWHITE_EX"   : 97
-        }
-        
-        self.back_color_panel = {
-            "_BLACK"          : 40,
-            "_RED"            : 41,
-            "_GREEN"          : 42,
-            "_YELLOW"         : 43,
-            "_BLUE"           : 44,
-            "_MAGENTA"        : 45,
-            "_CYAN"           : 46,
-            "_WHITE"          : 47,
-            "_RESET"          : 49,
-            "_LIGHTBLACK_EX"  : 100,
-            "_LIGHTRED_EX"    : 101,
-            "_LIGHTGREEN_EX"  : 102,
-            "_LIGHTYELLOW_EX" : 103,
-            "_LIGHTBLUE_EX"   : 104,
-            "_LIGHTMAGENTA_EX": 105,
-            "_LIGHTCYAN_EX"   : 106,
-            "_LIGHTWHITE_EX"  : 107
-        }
-        
-        self.style_panel = {
-            "RESET"           : 0,
-            "BOLD"            : 1,
-            "DIM"             : 2,
-            "ITALIC"          : 3,
-            "UNDERLINE"       : 4,
-            "BLINK"           : 5,
-            "REVERSE"         : 7,
-            "STRIKTHROUGH"    : 9
-        }
+                json.dump({"prompt" : [], "title" : [], "selected_language" : [], "preset" : {}}, f, indent=4)
             
-
                 
         if os.path.isfile(self.path + 'settings\\language.json'):
             pass
         else:
+            import urllib.request
+            
             print(self.color("YELLOW", "The language file doesn't exist yet. Downloading it..."))
-            urllib.request.urlretrieve("https://raw.githubusercontent.com/Remi-Avec-Un-I/Custom_Cmd/main/language.json?token=GHSAT0AAAAAABUDSGYFJZJOD6JDGPDYHEQ4YTWSAMA", self.path + 'settings\\language.json')
+            urllib.request.urlretrieve("https://raw.githubusercontent.com/Remi-Avec-Un-I/Custom_Cmd/main/language.json", 
+                                       self.path + 'settings\\language.json')
             print(self.color("GREEN", "Downloaded."))
             
-            
-        
-        self.commands = {
-            "leave": ["exit", "leave", "quit"],
-            "help" : ["help", "h", "-help", "-h", "--help", "--h", "?"],
-            "setup" : ["setup", "config", "configure"],
-            "pwd"   : ["pwd", "cd"],
-            "randnum" : ["randint", "randomint", "random", "rdint", "rd", "randnum", "rand"],
-            "art" : ["art", "1-line"],
-            "calc" : ["calc", "calculator", "calcul", "calculatrice"],
-            
-            
-            # Left are linux commands, right are windows commands.
-            "liste" : {
-                "ls"        : "dir", 
-                "mv"        : "ren",
-                "cp"        : "copy",
-                "mv"        : "move",
-                "clear"     : "cls",
-                "rm"        : "del",
-                "diff"      : "fc"
-                 
-            }
-            
-        }
         
         try:
             # Load art.py.
@@ -119,48 +139,86 @@ class Shell:
                 self.art_dict = dict(eval(art))
             
         except:
-            self.art_dict = False
+            import urllib.request
+            
+            print(self.color("YELLOW", "The art file, for the art command doesn't exist. Downloading it..."))
+            urllib.request.urlretrieve("https://raw.githubusercontent.com/Remi-Avec-Un-I/Custom_Cmd/main/art.py",
+                                       self.path + 'settings\\art.py')
+            try:
+                with open(self.path + 'settings\\art.py', 'r', encoding='utf-8') as f:
+                    art = f.read()
+                    art = art.split('\n')
+                    art = art[1:]
+                    art = '\n'.join(art)
+                    art = '{' + art
+                    self.art_dict = dict(eval(art))
+            except:
+                print(self.color("RED", "The art file, for the art command, is corrupted. \nPlease contact the creator (on github : https://github.com/Remi-Avec-Un-I)."))
+
+        
+        print(self.color("CYAN", f"{self.color('WHITE', 'Shell')} {self.color('CYAN', 'started')} {self.color('WHITE', f'in {time.time() - rn} seconds.')}"))
+
 
 
     # Main function, where the shell is started using infinite loop.
     def run(self):
         """Run the shell."""
-        
         while True:
             is_command = False
+            self.txt = self.get_json(self.path + 'settings\\language.json')
+            self.settings = self.get_json(self.path + 'settings\\settings.json')
             if self.is_settings:
                 self.entry_prompt = self.prompt()
                 
+            usage = self.get_json(self.path + 'settings\\language.json')["usage"][self.get_lang()]
+            self.commands = []
+            for i in usage:
+                self.commands.append(
+                    Command(i, usage[i]["Alias"], usage[i]["Description"], usage[i]["Arguments"])
+                )
+                
+            List_egal_command = self.get_json(self.path + 'settings\\language.json')["List_egal_command"]
+            for i in List_egal_command:
+                self.commands.append(
+                    List(i, List_egal_command[i])
+                )
+            # self.get_commands("List"))
+            # self.get_commands("Command"))
             command = input(self.entry_prompt).lower()
+            commands = self.get_List()
             
+            
+            # Check for command in List dataclass.
             if command == "":
                 pass
-            elif command.split()[0] in self.commands["liste"].keys():
+            elif command.split()[0] in commands.keys():
                 try:
-                    os.system(f"{self.commands['liste'][command.split()[0]]} {command.split()[1]}")
+                    os.system(f"{commands[command.split()[0]]} {command.split()[1]}")
                 except:
-                    os.system(self.commands['liste'][command.split()[0]])
+                    os.system(commands[command.split()[0]])
                 is_command = True
                     
             else: 
-                for val in self.commands.values():
-                    
-                    if command.split()[0] in val:
-                        for func in self.commands.keys():
-                            if self.commands[func] == val:
-                                
-                                try:
-                                    args = command.split()[1:]
-                                    getattr(self, func)(command.split()[1:])
-                                        
-                                except IndexError:
-                                    try:
-                                        getattr(self, func)()
-                                    except:
-                                        print(e)
-                                        print(self.texte("arg_error")[0] + command.split()[0] + self.texte("arg_error")[1])
-                                finally:
-                                    is_command = True
+                commands = self.get_commands('Command')
+                for val in self.commands:
+                    try:
+                        val = getattr(val, "alias")
+                    except: 
+                        val = []
+                    if command.split()[0] in val and is_command == False:
+                        
+                        try:
+                            args = command.split()[1:]
+                            getattr(self, val[0])(command.split()[1:])
+                        except IndexError:
+                            try:
+                                getattr(self, val[0])()
+                                break
+                            except Exception as e:
+                                print(e)
+                                print(self.texte("arg_error")[0] + command.split()[0] + self.texte("arg_error")[1])
+                        finally:
+                            is_command = True
                                  
             if not is_command:
                 try:
@@ -172,7 +230,7 @@ class Shell:
     def prompt(self):
         entry_prompt = []
             
-        settings = self.get_json(self.path + 'settings\\settings.json')
+        settings = self.settings
             
             
         if settings["title"] != "":
@@ -243,21 +301,50 @@ class Shell:
     def hook(self, tx, clr='YELLOW'):
         return f"[\033[{self.color_panel[clr]}m{tx}\033[0m]"
     
+    """    
+    def up(self, line=1):
+        for i in self.counter:
+            if i != 0:
+                print("\033[F")
+            else:
+                print(f"\033[{int(i/os.get_terminal_size().columns)}F")
+        
+        print(f"\033[{line}F" + (" " * os.get_terminal_size().columns + "\n") * (line)) # get_terminal_size to replace with blank
+        return f"\033[{line+2}F"
+    """
+
+    """
+    # Custom print to count the lines used to be able to replace them with blank
+    def cprint(self, *objects, sep=' ', end='\n', file=sys.stdout, flush=False):
+        # count the lines used by objects
+        for i in ''.join(objects).splitlines():
+            if i[-1:] == '\n':
+                self.counter += 1
+            self.counter.append(len(i))
+
+        print(*objects, sep=sep, end=end, file=file, flush=flush)
+    """
+    
     # Preventing the shell from closing in case of ValueError.
-    def intinput(self, tx, clr='RED'):
+    def intinput(self, tx, clr='RED', log=False):
+        fail = "\033[F"
         while True:
             choice = input(tx)
             try:
                 choice = int(choice)
+                if log:
+                    self.log.append((tx, choice))
                 return choice
             except:
-                print(self.color(clr, self.texte("int_error")))
+                print(fail + self.color(clr, self.texte("int_error")))
+                if fail == "\033[F":
+                    fail = "\033[F\033[F"
             
     # Create a menu to choose an option.
     def menu(self, options):
         """Print a menu."""
-        for option in options:
-            print(f"[{self.color('YELLOW', f'{options.index(option) + 1}')}] {option}")
+        for option, index in zip(options, range(len(options))):
+            print(f"[{self.color('YELLOW', f'{index + 1}')}] {option}")
             
     # Get json variables. 
     def get_json(self, file):
@@ -266,31 +353,84 @@ class Shell:
             return loaded
         
     # To get texte from language file.
-    def texte(self, name) -> str:
-        return self.get_json(self.path + 'settings\\language.json')["texte"][self.get_lang()][name]
+    def texte(self, name):
+        return self.txt["texte"][self.get_lang()][name]
+    
+    # To get all commands.
+    def get_commands(self, data=False):
+        commands = []
+        for i in self.commands:
+            if not data:
+                commands.append(i.name)
+            elif data and type(i).__name__ == data:
+                commands.append(i.name)
+                
+        return commands
+    
+    # To get a dict of List commands.
+    def get_List(self):
+        liste = dict()
+        for i in self.commands:
+            if type(i).__name__ == "List":
+                liste[i.name] = i.original
+        return liste
+    
+    # To get the data of a specfiic command.
+    def get_datacmd(self, name):
+        for i in self.commands:
+            if i.name == name:
+                return i
+    
     
     # Change json content, or replace
-    def in_json(self, file, value, key="prompt", replace=False):
+    def in_json(self, file, value, key="prompt", replace=False, new_element=False):
+        """
+        Use to append or replace a value in a json file.
+        """
         loaded = self.get_json(file)
         
-        if not replace:
-            loaded[key].append(value)
+        if not new_element:
+            if not replace:
+                loaded[key].append(value)
+            else:
+                loaded[key] = [value]
         else:
-            loaded[key] = [value]
+            if isinstance(value, list):
+                loaded[key] = [''.join(value)]
         
         with open(file, 'w', encoding="utf-8") as f:
             json.dump(loaded, f, indent=4)
     
     # Return the current language.
     def get_lang(self):
-        if self.get_json(self.path + 'settings\\settings.json')["selected_language"] != []:
-            return ''.join(self.get_json(self.path + 'settings\\settings.json')["selected_language"])
+        if self.settings["selected_language"] != []:
+            return ''.join(self.settings["selected_language"])
         else:
             return "en"
         
+    # Used to modify or create a preset, in preset()
+    def modify_preset(self, texte, name, new_element=False):
+        with open(self.path + 'settings\\settings.json', 'r', encoding="utf-8") as f:
+            f = json.load(f)
+        if not new_element:
+            f["preset"][name].append(texte)
+            self.in_json(self.path + 'settings\\settings.json', f, replace=True)
+            """
+            try:
+                self.in_json(self.path + 'settings\\settings.json', texte, key="preset")
+            except:
+                self.in_json(self.path + 'settings\\settings.json', texte, key="preset", new_element=True)
+            """
+        else:
+            try:
+                self.in_json(self.path + 'settings\\settings.json', texte, key="preset", new_element=True)
+            except:
+                pass
+    
+    
     # Return the help for a command.
     def get_help(self, command):
-        dict_help = self.get_json(self.path + 'settings\\language.json')["usage"][self.get_lang()][command]
+        dict_help = self.txt["usage"][self.get_lang()][command]
             
         text = f"{self.color('GREEN', list(dict_help.keys())[0])} : "
         for x in dict_help[list(dict_help.keys())[0]]:
@@ -300,14 +440,13 @@ class Shell:
         text += f"{self.color('GREEN', list(dict_help.keys())[2])} : "
         for x in dict_help[list(dict_help.keys())[2]]:
             text += f"{x}\n"
-            
+
         return text
-                
         
     # Command : leave
     def leave(self, help=False):
         """Exit the shell."""
-        if help in self.commands["help"]:
+        if ''.join(help) in self.get_datacmd("help").alias:
             print(self.get_help("leave"))
         else:
             sys.exit(0)
@@ -318,30 +457,35 @@ class Shell:
             os.system("help")
             print("\n\n")
         
-        for key in self.commands.keys():
-            if key == "liste":
-                for command in self.commands[key]:
-                    print(command  + " " *(12 - len(command)) + self.texte("help_liste") + self.commands[key][command])
-            else:
-                print(self.get_json(self.path + "settings\\language.json")[self.get_lang()][key])
+        print(self.get_commands("List"))
+        for cmd in self.get_commands("Command"):
+            print(self.txt[self.get_lang()][cmd])
+        for cmd in self.get_List().keys():
+            print(cmd  + " " *(12 - len(cmd)) + self.texte("help_liste") + self.get_List()[cmd])
+        
                 
     # Command : setup (pretty big one isn't it ?)
     def setup(self, help=False):
         """Setup the shell."""
-        if help in self.commands["help"]:
+        if ''.join(help) in self.get_datacmd("help").alias:
             print(self.get_help("setup"))
             
         else:
-            text = self.get_json(self.path + 'settings\\language.json')["texte"][self.get_lang()]
+            text = self.txt["texte"][self.get_lang()]
             print(f"{self.color('GREEN', tx=text['welcome'])}")
             self.menu(text["choice"])
             
             choice = self.intinput(f"{self.hook('?')} > ")
+            """
+            1 : Prompt
+            2 : Language
+            3 : Exit
+            """
+            
             
             if choice == 1:
                 
                 print(self.color("GREEN", text['prompt']))
-                backup = self.entry_prompt
                 
                 while True:
                     
@@ -349,6 +493,18 @@ class Shell:
                     self.entry_prompt = self.prompt()
                     
                     choice = self.intinput(f"{text['prompt_look']} {self.entry_prompt}\n{self.hook('?')} > ")
+                    """
+                    1 : Path
+                    2 : Time
+                    3 : User
+                    4 : Host
+                    5 : Color
+                    6 : Style
+                    7 : Window Title
+                    8 : Custom text
+                    9 : Reset
+                    10: Exit
+                    """
                     
                     if choice == 1:
                         """Adding path"""
@@ -359,10 +515,17 @@ class Shell:
                         """Adding the time"""
                         
                         self.menu(text['time'])
-                        finish = False
-                        while not finish:
-                            choice = self.intinput(f"{self.hook('?')} > ")
-                            
+                        while (choice := self.intinput(f"{self.hook('?')} > ")) != 8:
+                            """
+                            1 : Custom text (to separate the time for exemple)
+                            2 : Year
+                            3 : Month
+                            4 : Day
+                            5 : Hour
+                            6 : Minute
+                            7 : Second
+                            8 : Exit
+                            """
                             if choice == 1:
                                 custom = input(text["custom_text"])
                                 self.in_json(self.path + 'settings\\settings.json', custom)
@@ -379,9 +542,6 @@ class Shell:
                                 self.in_json(self.path + 'settings\\settings.json', "**minute**")
                             elif choice == 7:
                                 self.in_json(self.path + 'settings\\settings.json', "**second**")
-                                
-                            elif choice == 8:
-                                finish = True
                         print("\n\n")
                         
                     elif choice == 3:
@@ -398,17 +558,32 @@ class Shell:
                         
                         self.menu(text['color_type'])
                         choice_color = self.intinput(f"{self.hook('?')} > ")
+                        """
+                        1 : Foreground
+                        2 : Background
+                        3 : Back
+                        """
                         while not finish:
                             if choice_color == 1:
                                 print(text["color_exemple"][0] + self.color("BLUE", text["color_exemple"][1]))
                                 self.menu(text["color_choice"])
                                 choice = self.intinput(f"{self.hook('?')} > ")
+                                """
+                                [1-9] : Color
+                                10 : More
+                                11 : Exit
+                                """
                                 prefix = ""
                                 
                             elif choice_color == 2:
                                 print(text["color_exemple"][0] + self.back("_BLUE", text["color_exemple"][1]))
                                 self.menu(text["color_choice"])
                                 choice = self.intinput(f"{self.hook('?')} > ")
+                                """
+                                [1-9] : Color
+                                10 : More
+                                11 : Exit
+                                """
                                 prefix = "_"
                                 
                             elif choice_color == 3:
@@ -419,7 +594,10 @@ class Shell:
                                 while not finish:
                                     self.menu(text["color_choice_2"])
                                     choice = self.intinput(f"{self.hook('?')} > ")
-                                    
+                                    """
+                                    [1-8] : Color
+                                    9 : Back
+                                    """
                                     if choice in range(1, 8):
                                         self.in_json(self.path + 'settings\\settings.json', f"{prefix}{list(self.color_panel.keys())[choice-1+9]}")
                                         
@@ -437,13 +615,17 @@ class Shell:
                         """Adding the style"""
                         finish = False
                         while not finish:
-                            for i in text["style_choice"]:
+                            for i, index in zip(text["style_choice"], range(len(text["style_choice"]))):
                                 if i == "Exit":
                                     print(self.hook("8") + " Exit")
                                 else:
-                                    print("[" + self.color("YELLOW", str(text['style_choice'].index(i) + 1)) + "] " + self.style(i.upper(), i))
+                                    print("[" + self.color("YELLOW", str(index + 1)) + "] " + self.style(i.upper(), i))
                             
                             choice = self.intinput(f"{self.hook('?')} > ")
+                            """
+                            [1-7] : Different Style
+                            8 : Exit
+                            """
                             
                             if choice == 1:
                                 """Adding bold style"""
@@ -480,10 +662,16 @@ class Shell:
                     
                     elif choice == 7:
                         title = input(text["title"])
+                        """
+                        Choose the name  of the windows :
+                        """
                         self.in_json(self.path + 'settings\\settings.json', title, key="title", replace=True)
                         
                     elif choice == 8:
                         custom = input(text["custom_text"])
+                        """
+                        Enter your text :
+                        """
                         self.in_json(self.path + 'settings\\settings.json', custom)
                                                 
                     elif choice == 9:
@@ -498,38 +686,38 @@ class Shell:
             elif choice == 2:
                 finish = False
                 while not finish:
-                    self.menu(list(self.get_json(self.path + 'settings\\language.json')["texte"].keys()))
-                    print(self.hook(len(list(self.get_json(self.path + 'settings\\language.json')["texte"].keys())) + 1) + " Exit")
+                    self.menu(list(self.txt["texte"].keys()))
+                    print(self.hook(0) + self.txt["texte"][self.get_lang()]["exit"])
                     
                     choice = self.intinput(f"{self.hook('?')} > ")
+                    """
+                    [1-...] : All available languages
+                    0 : Exit 
+                    """
                     
-                    if choice == len(list(self.get_json(self.path + 'settings\\language.json')["texte"].keys())) + 1:
+                    if choice == 0:
                         finish = True
-                    elif choice > len(list(self.get_json(self.path + 'settings\\language.json')["texte"].keys())):
+                    elif choice > len(list(self.txt["texte"].keys())):
                         print(self.color("RED", text["language_error"]))
                     else:
-                        self.in_json(self.path + 'settings\\settings.json', list(self.get_json(self.path + 'settings\\language.json')["texte"].keys())[choice-1], 
+                        self.in_json(self.path + 'settings\\settings.json', list(self.txt["texte"].keys())[choice-1], 
                                      key="selected_language", replace=True)
                         finish = True
                 finish = False
                 
     # Command : pwd
     def pwd(self, path):
-        """double all \ from path[0]"""
-        if "\\" in path:
-            try:
-                os.chdir(path[0].replace("\\", "\\\\"))
-            except Exception as e:
-                print(e)
-        else:
-            try:
-                os.chdir(path[0])
-            except Exception as e:
-                print(e)
+        if path[0] in self.get_datacmd("help").alias:
+            print(self.get_help("pwd"))
+            return
+        try:
+            os.chdir(' '.join(path).replace("\\", "\\\\"))
+        except Exception as e:
+            print(e)
     
     # Command : randnum
     def randnum(self, args):
-        if args[0] in self.commands["help"]:
+        if args[0] in self.get_datacmd("help").alias:
             print(self.get_help("randnum"))
             return
         
@@ -551,7 +739,7 @@ class Shell:
 
     # Command : art
     def art(self, args=['']):
-        if args[0] in self.commands["help"]:
+        if args[0] in self.get_datacmd("help").alias:
             print(self.get_help("art"))
         
         elif self.art_dict:
@@ -568,7 +756,7 @@ class Shell:
                     
     # Command : calc
     def calc(self, args):
-        if args[0] in self.commands["help"]:
+        if args[0] in self.get_datacmd("help").alias:
             print(self.get_help("calc"))
 
         else:
@@ -577,6 +765,105 @@ class Shell:
             except Exception:
                 print(self.texte("calc_error"))
                 
-      
+    # Command : preset
+    def preset(self, args=['']):
+        if args[0] in self.get_datacmd("help").alias:
+            print(self.get_help("preset"))
+        
+        else:
+            self.menu(self.txt["texte"][self.get_lang()]["preset"])
+            choice = self.intinput(f"{self.hook('?')} > ")
+            """
+            1 : Create a new preset command
+            2 : Modify a preset command
+            3 : Delete a preset command
+            4 : Exit
+            """
+            if choice == 1: # Create a preset command
+                finish = False  
+                
+                print(self.txt["texte"][self.get_lang()]["preset_name"])
+                preset_name = input(f"{self.hook('?')} > ")           
+                while not finish:
+                    """
+                    Enter the name of the preset command :
+                    """
+                    
+                    self.menu(self.txt["texte"][self.get_lang()]["preset_list2"])
+                    choice = self.intinput(f"{self.hook('?')} > ")
+                    """
+                    1 : Start an application
+                    2 : Create a file/folder
+                    3 : Write in a file
+                    4 : Excecute a command in the terminal
+                    5 : Exit
+                    """
+                    
+                    if choice == 1: # Start an application
+                        self.menu(self.txt["texte"][self.get_lang()]["app_list"])
+                        app_choice = self.intinput(f"{self.hook('?')} > ")
+                        """
+                        1 : From startup folder
+                        2 : From the path
+                        """
+                        
+                        if app_choice == 1: # From startup folder
+                            path = "C:/Users/" + os.getlogin() + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
+                            apps = []
+                            for _, _, files in os.walk(path, topdown=False):
+                                for name in files:
+                                    if name.endswith((".lnk", ".url", ".bat", ".exe", ".py", ".jar", ".msi", ".vbs")):
+                                        apps.append(os.path.join(name))
+                            self.menu(apps)
+                            print(self.hook(0) + self.txt["texte"][self.get_lang()]["back"])
+                            app_choice = self.intinput(f"{self.hook('?')} > ")
+                            """
+                            [Not assign] : All application in the startup folder
+                            [Last] : Back
+                            """
+                            if app_choice == 0:
+                                pass
+                            else:
+                                try:
+                                    self.in_json(self.path + 'settings\\settings.json', "start:" + apps[app_choice-1], key="preset")
+                                except Exception as e:
+                                    print(e)
+                                    self.in_json(self.path + 'settings\\settings.json', "start:" + apps[app_choice-1], key="preset", new_element=True)
+                            
+                        elif app_choice == 2: # From path
+                            
+                            while not (os.path.isfile(app_choice := input(f"{self.hook(self.get_json(self.path + 'settings/language.json')['texte'][self.get_lang()]['app_choice'])} > "))):
+                                """
+                                The full path of the application :
+                                """
+                                pass
+                            
+                            try:
+                                self.in_json(self.path + 'settings\\settings.json', "start:" + app_choice, key="preset")
+                            except:
+                                self.in_json(self.path + 'settings\\settings.json', "start: " + app_choice, key="preset", new_element=True)
+                    
+                    elif choice == 2: # Create a file/folder
+                        
+                        self.menu(self.txt["texte"][self.get_lang()]["create_file"])
+                        choice = self.intinput(f"{self.hook('?')} > ")
+                        
+                        """
+                        1 : File
+                        2 : Folder
+                        
+                        """
+                        if choice == 1:
+                            print(self.color("GREEN", self.txt['texte'][self.get_lang()]['file_name']))
+                            name = input(f"{self.hook('?')} > ")
+                            """
+                            Enter the name of the file :
+                            """
+                            self.modify_preset("create_file:" + name, preset_name)
+                            
+                    elif choice == 5:
+                        break
+
+
 shell = Shell()
 shell.run()
